@@ -61,12 +61,14 @@
     {
       label: 'Rust Crate Api',
       name: 'rust-crate-api',
-      path: 'http://127.0.0.1:8080/solve'
+      path: 'http://127.0.0.1:8080/solve',
+      pathBuilder: (path, line) => `${path}/${line}`
     },
     {
       label: 'Node Handmade Api',
       name: 'node-handmade-api',
-      path: 'http://127.0.0.1:8125/solve'
+      path: 'http://127.0.0.1:8125/vetor-tabuleiro',
+      pathBuilder: (path, line) => `${path}?table=${line.split('').map(l => l==='.'? '0': l).join(',')}`,
     },
   ];
   const initialSudokuLine = '...2...633....54.1..1..398........9....538....3........263..5..5.37....847...1...';
@@ -84,8 +86,8 @@
     document.querySelector(durationCellSelector).textContent = time;
   }
 
-  const fetchResult = async ({path}) => {
-    const result = await fetch(`${path}/${getSudokuLine()}`).then(res => res.text())
+  const fetchResult = async ({path, pathBuilder}) => {
+    const result = await fetch(`${pathBuilder(path, getSudokuLine())}`).then(res => res.text())
   }
 
   const getResultRowHtml = ({label, name, path, msDuration}) => `
