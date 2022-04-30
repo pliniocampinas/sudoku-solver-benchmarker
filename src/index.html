@@ -114,9 +114,12 @@
     apis.forEach(async (api) => {
       const start = new Date().getTime();
 
+      const requests = []
       for (i = 0; i < getRepeatNumber(); ++i) {
-        await fetchResult(api)
+        requests.push(fetchResult(api))
       }
+      // Run requests in parallel
+      await Promise.all(requests)
 
       const end = new Date().getTime();
       const time = end - start;
