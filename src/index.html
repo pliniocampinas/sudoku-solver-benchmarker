@@ -29,11 +29,18 @@
   tr:nth-child(even) {
     background-color: #dddddd;
   }
+
+  .mb-1 {
+    margin-bottom: 10px;
+  }
 </style>
 <body>
   <h1>Sudoku Benchmarker</h1>
   <div class="results">
-    <textarea id="sudoku-line-input"></textarea>
+    <label for="sudoku-line-input">Sudoku Line:</label>
+    <textarea class="mb-1" id="sudoku-line-input"></textarea>
+    <label for="request-repeat">Request Repeat Number:</label>
+    <input class="mb-1" id="request-repeat" type="number">
     <button class="run-button">Run Benchmarker</button>
     <p>Results:</p>
     <table id="results-table">
@@ -58,13 +65,22 @@
     }
   ];
   const initialSudokuLine = '...2...633....54.1..1..398........9....538....3........263..5..5.37....847...1...';
-  const getSudokuLine = () => document.querySelector('#sudoku-line-input')?.textContent
-  const setSudokuLine = (newValue) => document.querySelector('#sudoku-line-input').textContent = newValue
+  const sudokuLineSelector = '#sudoku-line-input';
+  const getSudokuLine = () => document.querySelector(sudokuLineSelector)?.textContent
+  const setSudokuLine = (newValue) => document.querySelector(sudokuLineSelector).textContent = newValue
 
-  const fetchResult = async ({name, path}) => {
-    console.log('Fetching...')
+  const initialRepeatNumber = 100;
+  const repeatNumberSelector = '#request-repeat';
+  const getRepeatNumber = () => document.querySelector(repeatNumberSelector)?.value
+  const setRepeatNumber = (newValue) => document.querySelector(repeatNumberSelector).value = newValue
+
+  const setResultTime = (api, time) => {
+    const durationCellSelector = `#${api.name}-duration`;
+    document.querySelector(durationCellSelector).textContent = time;
+  }
+
+  const fetchResult = async ({path}) => {
     const result = await fetch(`${path}/${getSudokuLine()}`).then(res => res.text())
-    console.log(`API[${name}] Result[${result}]`)
   }
 
   const getResultRowHtml = ({label, name, path, msDuration}) => `
@@ -82,20 +98,29 @@
     })
   }
 
+  const logDuration = (api, ms) => {
+    console.log(`Api[${api.name}] - Execution time[${ms}ms]`);
+  }
+
   const runBenchmark = () => {
+    console.log('Fetching...')
     apis.forEach(async (api) => {
       const start = new Date().getTime();
-      await fetchResult(api)
+
+      for (i = 0; i < getRepeatNumber(); ++i) {
+        await fetchResult(api)
+      }
+
       const end = new Date().getTime();
       const time = end - start;
-      console.log('Execution time: ' + time);
-      const durationCellSelector = `#${api.name}-duration`;
-      document.querySelector(durationCellSelector).textContent = time;
+      logDuration(api, time);
+      setResultTime(api, time);
     })
   }
 
   window.addEventListener('load', () => {
     setSudokuLine(initialSudokuLine)
+    setRepeatNumber(initialRepeatNumber)
     initTable();
     document.querySelector('.run-button').addEventListener('click', runBenchmark);
   });
