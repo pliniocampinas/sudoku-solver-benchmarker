@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sudoku Benchmarker</title>
+</head>
+<style>
+  .results {
+    width: 300px;
+  }
+
+  .run-button {
+    width: 100%;
+  }
+
+  .results textarea {
+    width: 100%;
+    height: 52px;
+  }
+
+  td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+  }
+
+  tr:nth-child(even) {
+    background-color: #dddddd;
+  }
+</style>
+<body>
+  <h1>Sudoku Benchmarker</h1>
+  <div class="results">
+    <textarea id="sudoku-line-input"></textarea>
+    <button class="run-button">Run Benchmarker</button>
+    <p>Results:</p>
+    <table id="results-table">
+      <thead>
+        <tr>
+          <th>API</th>
+          <th>Path</th>
+          <th>ms</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+  </div>
+</body>
+<script>
+  const apis = [
+    {
+      label: 'Rust Crate Api',
+      name: 'rust-crate-api',
+      path: 'http://127.0.0.1:8080/solve'
+    }
+  ];
+  const initialSudokuLine = '...2...633....54.1..1..398........9....538....3........263..5..5.37....847...1...';
+  const getSudokuLine = () => document.querySelector('#sudoku-line-input')?.textContent
+  const setSudokuLine = (newValue) => document.querySelector('#sudoku-line-input').textContent = newValue
+
+  const fetchResult = async ({name, path}) => {
+    console.log('Fetching...')
+    const result = await fetch(`${path}/${getSudokuLine()}`).then(res => res.text())
+    console.log(`API[${name}] Result[${result}]`)
+  }
+
+  const getResultRowHtml = ({label, name, path, msDuration}) => `
+    <td>${label}</td>
+    <td>${path}</td>
+    <td id=${name}-duration>${msDuration || "-"}</td>
+  `;
+
+  const initTable = () => {
+    const tBodyRef = document.querySelector('#results-table tbody')
+    apis.forEach(api => {
+      const rowElement = document.createElement('tr');
+      rowElement.innerHTML = getResultRowHtml(api);
+      tBodyRef.appendChild(rowElement)
+    })
+  }
+
+  const runBenchmark = () => {
+    apis.forEach(async (api) => {
+      const start = new Date().getTime();
+      await fetchResult(api)
+      const end = new Date().getTime();
+      const time = end - start;
+      console.log('Execution time: ' + time);
+      const durationCellSelector = `#${api.name}-duration`;
+      document.querySelector(durationCellSelector).textContent = time;
+    })
+  }
+
+  window.addEventListener('load', () => {
+    setSudokuLine(initialSudokuLine)
+    initTable();
+    document.querySelector('.run-button').addEventListener('click', runBenchmark);
+  });
+</script>
+</html>

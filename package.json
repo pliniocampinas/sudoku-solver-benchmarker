@@ -1,0 +1,22 @@
+{
+  "name": "sudoku-solver-benchmarker",
+  "version": "1.0.0",
+  "description": "An app to test different sudoku solving api's",
+  "main": "index.js",
+  "scripts": {
+    "serve": "http-server ./src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pliniocampinas/sudoku-solver-benchmarker.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pliniocampinas/sudoku-solver-benchmarker/issues"
+  },
+  "homepage": "https://github.com/pliniocampinas/sudoku-solver-benchmarker#readme",
+  "dependencies": {
+    "http-server": "^14.1.0"
+  }
+}
