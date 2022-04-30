@@ -112,6 +112,7 @@
   const runBenchmark = () => {
     console.log('Fetching...')
     apis.forEach(async (api) => {
+      setResultTime(api, '-');
       const start = new Date().getTime();
 
       const requests = []
