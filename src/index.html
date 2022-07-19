@@ -91,6 +91,12 @@
       basePath: 'http://127.0.0.1:8125/vetor-tabuleiro',
       pathBuilder: (path, line) => `${path}?table=${line.split('').map(l => l==='.'? '0': l).join(',')}`,
     },
+    {
+      label: 'Golang package Api',
+      name: 'golang-package-api',
+      basePath: 'http://127.0.0.1:9000/solve',
+      pathBuilder: (path, line) => `${path}/${line.split('').map(l => l==='.'? '0': l).join('')}`,
+    },
   ].map(buildPath);
 
   const sudokuLineSelector = '#sudoku-line-input';
