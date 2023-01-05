@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sudoku Benchmarker</title>
+</head>
+<style>
+  h1 {
+    margin-top: 0px;
+  }
+
+  .app {
+    margin: auto;
+    padding: 12px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f9f9f9;
+    border: 1px solid #000;
+  }
+
+  .results {
+    width: 350px;
+  }
+
+  .run-button {
+    width: 100%;
+  }
+
+  .results textarea {
+    width: 100%;
+    height: 52px;
+  }
+
+  .mb-1 {
+    margin-bottom: 10px;
+  }
+</style>
+<body>
+  <div class="app">
+    <header>
+      <a class="header-link" href="./">Benchmarker</a>
+      <span class="header-link-separator"> - </span>
+      <a class="header-link" href="sudoku-client.html">Sudoku Client</a>
+    </header>
+    <h1>Sudoku Solver Client</h1>
+    <div class="results">
+      <label for="sudoku-line-input">Sudoku Line:</label>
+      <textarea class="mb-1" id="sudoku-line-input"></textarea>
+
+      <label for="api-url-input">Api Url:</label>
+      <input class="mb-1" type="text" id="api-url-input">
+
+      <button class="run-button">Solve</button>
+      
+      <p>Results:</p>
+      
+    </div>
+  </div>
+</body>
+<script>
+  const initialSudokuLine = '...2...633....54.1..1..398........9....538....3........263..5..5.37....847...1...';
+
+  const sudokuLineSelector = '#sudoku-line-input';
+  const getSudokuLine = () => document.querySelector(sudokuLineSelector)?.textContent
+  const setSudokuLine = (newValue) => document.querySelector(sudokuLineSelector).textContent = newValue
+
+  const apiUrlSelector = '#api-url-input';
+  const getApiUrl = () => document.querySelector(apiUrlSelector)?.value
+  const setApiUrl = (newValue) => document.querySelector(apiUrlSelector).value = newValue
+
+  const initBoard = () => {
+    console.log('initBoard')
+  }
+
+  const runTest = () => {
+    console.log('runTest', getApiUrl())
+  }
+
+  window.addEventListener('load', () => {
+    setSudokuLine(initialSudokuLine)
+    setApiUrl('http://127.0.0.1:8080/solve')
+    initBoard();
+    document.querySelector('.run-button').addEventListener('click', runTest);
+  });
+</script>
+</html>
