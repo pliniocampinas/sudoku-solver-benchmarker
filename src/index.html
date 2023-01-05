@@ -13,7 +13,7 @@
 
   .app {
     margin: auto;
-    padding: 20px;
+    padding: 12px;
     width: 100%;
     max-width: 400px;
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
@@ -25,7 +25,7 @@
   }
 
   .results {
-    width: 300px;
+    width: 350px;
   }
 
   .run-button {
@@ -40,7 +40,7 @@
   td, th {
     border: 1px solid #dddddd;
     text-align: left;
-    padding: 8px;
+    padding: 4px;
   }
 
   tr:nth-child(even) {
@@ -64,6 +64,7 @@
       <table id="results-table">
         <thead>
           <tr>
+            <th>Selected</th>
             <th>API</th>
             <th>Path</th>
             <th>ms</th>
@@ -118,6 +119,7 @@
   }
 
   const getResultRowHtml = ({label, name, basePath, msDuration}) => `
+    <td><input type="checkbox" api-name=${name} class="selected-api"></td>
     <td>${label}</td>
     <td>${basePath}</td>
     <td id=${name}-duration>${msDuration || "-"}</td>
@@ -138,7 +140,10 @@
 
   const runBenchmark = () => {
     console.log('Fetching...')
-    apis.forEach(async (api) => {
+    document.querySelectorAll('.selected-api:checked').forEach(async inputElement => {
+      const apiName = inputElement.getAttribute('api-name')
+      const api = apis.find(a => a.name === apiName)
+
       setResultTime(api, '-');
       const start = new Date().getTime();
 
@@ -146,7 +151,7 @@
       for (i = 0; i < getRepeatNumber(); ++i) {
         requests.push(fetchResult(api))
       }
-      // Run requests in parallel
+      // Run requests in 'parallel'
       await Promise.all(requests)
 
       const end = new Date().getTime();
