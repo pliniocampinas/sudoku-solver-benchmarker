@@ -152,8 +152,28 @@
     createBoardCells()
   }
 
+  const resetBoard = (newLine) => {
+    let index = 0
+    const cells = [...document.querySelectorAll('.board-cell__text')]
+    for(line=1;line<=9;line++) {
+      for(colunm=1;colunm<=9;colunm++) {
+        cells[index].innerText = newLine[index]
+        index++
+      }
+    }
+    currentSudokuLine = newLine
+    setSudokuLine(newLine)
+  }
+
   const runTest = () => {
-    console.log('runTest', getApiUrl())
+    fetch(getApiUrl() + '/' +currentSudokuLine)
+      .then(response => response.text())
+      .then(sudoku_solution => {
+        console.log('sudoku_solution', sudoku_solution)
+        if(sudoku_solution.length === 81) {
+          resetBoard(sudoku_solution)
+        }
+      })
   }
 
   window.addEventListener('load', () => {
@@ -167,7 +187,6 @@
         evt.target.value = currentSudokuLine
         return
       }
-      console.log('newValue ', newValue)
       currentSudokuLine = newValue
       document.querySelectorAll('.board-cell__text').forEach((item, index) => {
         item.innerText = currentSudokuLine[index]
