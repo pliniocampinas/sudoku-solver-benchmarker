@@ -26,6 +26,9 @@
 
   .results {
     width: 350px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .run-button {
@@ -39,6 +42,17 @@
 
   .mb-1 {
     margin-bottom: 10px;
+  }
+
+  .board {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    height: 280px;
+    width: 280px;
+  }
+
+  .board-cell {
+    border: 1px solid black;
   }
 </style>
 <body>
@@ -58,7 +72,11 @@
 
       <button class="run-button">Solve</button>
       
-      <p>Results:</p>
+      <h3>Results:</h3>
+
+      <div class="board" id="sudoku-board">
+
+      </div>
       
     </div>
   </div>
@@ -74,8 +92,21 @@
   const getApiUrl = () => document.querySelector(apiUrlSelector)?.value
   const setApiUrl = (newValue) => document.querySelector(apiUrlSelector).value = newValue
 
+  const createBoardCells = () => {
+    const board = document.querySelector('#sudoku-board')
+
+    for(line=1;line<=9;line++) {
+      for(colunm=1;colunm<=9;colunm++) {
+        const cellElement = document.createElement('div')
+        cellElement.classList.add('board-cell')
+        board.appendChild(cellElement)
+      }
+    }
+  }
+
   const initBoard = () => {
     console.log('initBoard')
+    createBoardCells()
   }
 
   const runTest = () => {
