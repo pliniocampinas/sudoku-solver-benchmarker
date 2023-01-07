@@ -94,11 +94,17 @@
   </div>
 </body>
 <script>
+  function setCharAt(str,index,chr) {
+    if(index > str.length-1) return str;
+    return str.substring(0,index) + chr + str.substring(index+1);
+  }
+
   const initialSudokuLine = '...2...633....54.1..1..398........9....538....3........263..5..5.37....847...1...';
 
-  const sudokuLineSelector = '#sudoku-line-input';
-  const getSudokuLine = () => document.querySelector(sudokuLineSelector)?.textContent
-  const setSudokuLine = (newValue) => document.querySelector(sudokuLineSelector).textContent = newValue
+  const sudokuLineInputSelector = '#sudoku-line-input'
+  let currentSudokuLine = initialSudokuLine
+  const getSudokuLine = () => document.querySelector(sudokuLineInputSelector)?.textContent
+  const setSudokuLine = (newValue) => document.querySelector(sudokuLineInputSelector).textContent = newValue
 
   const apiUrlSelector = '#api-url-input';
   const getApiUrl = () => document.querySelector(apiUrlSelector)?.value
@@ -118,9 +124,21 @@
         cellElement.addEventListener('click', (evt) => {
           console.log('click', innerScopeIndex)
         })
+        cellElement.addEventListener('keypress', (evt) => {
+          if(isNaN(evt.key)) {
+            currentSudokuLine = setCharAt(currentSudokuLine, innerScopeIndex, '.')
+            setSudokuLine(currentSudokuLine)
+            cellElement.querySelector('.board-cell__text').innerText = '.'
+            return
+          }
+          console.log('keypress', innerScopeIndex, evt.key)
+          currentSudokuLine = setCharAt(currentSudokuLine, innerScopeIndex, evt.key)
+          setSudokuLine(currentSudokuLine)
+          cellElement.querySelector('.board-cell__text').innerText = evt.key
+        })
         const textElement = document.createElement('div')
         textElement.classList.add('board-cell__text')
-        textElement.innerText = '0'
+        textElement.innerText = initialSudokuLine[cellIndex]
 
         cellElement.appendChild(textElement)
         board.appendChild(cellElement)
@@ -143,6 +161,18 @@
     setApiUrl('http://127.0.0.1:8080/solve')
     initBoard();
     document.querySelector('.run-button').addEventListener('click', runTest);
+    document.querySelector(sudokuLineInputSelector).addEventListener('change', (evt) => {
+      const newValue = evt.target.value
+      if(newValue.length != 81 || isNaN(newValue.replaceAll('.', ''))) {
+        evt.target.value = currentSudokuLine
+        return
+      }
+      console.log('newValue ', newValue)
+      currentSudokuLine = newValue
+      document.querySelectorAll('.board-cell__text').forEach((item, index) => {
+        item.innerText = currentSudokuLine[index]
+      })
+    })
   });
 </script>
 </html>
