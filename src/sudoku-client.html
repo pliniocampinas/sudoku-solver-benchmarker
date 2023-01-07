@@ -52,7 +52,19 @@
   }
 
   .board-cell {
+    box-sizing: border-box;
     border: 1px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .board-cell:focus {
+    background-color: #c3c3c3;
+  }
+
+  .board-cell__text {
+    text-align: center;
   }
 </style>
 <body>
@@ -95,11 +107,24 @@
   const createBoardCells = () => {
     const board = document.querySelector('#sudoku-board')
 
+    let cellIndex = 0
     for(line=1;line<=9;line++) {
       for(colunm=1;colunm<=9;colunm++) {
         const cellElement = document.createElement('div')
         cellElement.classList.add('board-cell')
+        cellElement.setAttribute('cell-index', cellIndex)
+        cellElement.setAttribute('tabindex', cellIndex)
+        let innerScopeIndex = cellIndex
+        cellElement.addEventListener('click', (evt) => {
+          console.log('click', innerScopeIndex)
+        })
+        const textElement = document.createElement('div')
+        textElement.classList.add('board-cell__text')
+        textElement.innerText = '0'
+
+        cellElement.appendChild(textElement)
         board.appendChild(cellElement)
+        cellIndex++
       }
     }
   }
