@@ -40,8 +40,12 @@
     height: 52px;
   }
 
-  .mb-1 {
+  .mb-1, .my-1 {
     margin-bottom: 10px;
+  }
+
+  .mt-1, .my-1 {
+    margin-top: 10px;
   }
 
   .board {
@@ -66,6 +70,15 @@
   .board-cell__text {
     text-align: center;
   }
+
+  .board-error {
+    visibility: hidden;
+    font-size: larger;
+  }
+
+  .board-error--visible {
+    visibility: visible;
+  }
 </style>
 <body>
   <div class="app">
@@ -84,7 +97,9 @@
 
       <button class="run-button">Solve</button>
       
-      <h3>Results:</h3>
+      <h3 class="my-1">Results:</h3>
+
+      <p class="board-error my-1">Placeholder Message</p>
 
       <div class="board" id="sudoku-board">
 
@@ -165,15 +180,31 @@
     setSudokuLine(newLine)
   }
 
+  const showError = (erroMessage) => {
+    const el = document.querySelector('.board-error')
+    el.classList.add('board-error--visible')
+    el.innerText = `Error: ${erroMessage}`
+  }
+
+  const hideError = () => {
+    const el = document.querySelector('.board-error')
+    el.classList.remove('board-error--visible')
+    el.innerText = 'Placeholder Message'
+  }
+
   const runTest = () => {
+    hideError()
     fetch(getApiUrl() + '/' +currentSudokuLine)
       .then(response => response.text())
       .then(sudoku_solution => {
         console.log('sudoku_solution', sudoku_solution)
         if(sudoku_solution.length === 81) {
           resetBoard(sudoku_solution)
+          return
         }
+        showError(sudoku_solution)
       })
+      .catch(err => showError('api error'))
   }
 
   window.addEventListener('load', () => {
